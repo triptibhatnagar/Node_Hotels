@@ -3,8 +3,7 @@
 const mongoose = require('mongoose');
 
 // define mongodb url
-// const mongoURL = 'mongodb://127.0.0.1:27017/hotels'; // local url
-const mongoURL = 'mongodb+srv://bhatnagartripti2727:helloworldtripti27$@cluster0.wf9rkoc.mongodb.net/' // online url -> connect to online cluster
+const mongoURL = 'mongodb://127.0.0.1:27017/hotels'; // local url
 
 // setup mongodb connection
 // useNewUrlParser, useUnifiedTopology - mandatory config options
