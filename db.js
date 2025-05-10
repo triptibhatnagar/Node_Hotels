@@ -1,9 +1,12 @@
 // CONNECT NODE SERVER AND MONGODB SERVER - USING MONGOOSE
 // import mongoose
 const mongoose = require('mongoose');
+require('dotenv').config()
 
 // define mongodb url
-const mongoURL = 'mongodb://127.0.0.1:27017/hotels'; // local url
+// const mongoURL = ''; // local url
+// const mongoURL = process.env.MONGODB_URL_LOCAL; // online url -> connect to online cluster
+const mongoURL = process.env.MONGODB_URL; // online url -> connect to online cluster
 
 // setup mongodb connection
 // useNewUrlParser, useUnifiedTopology - mandatory config options
