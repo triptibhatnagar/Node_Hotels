@@ -16,9 +16,12 @@ const logReq = (req, res, next) => {
 // const person = require('./models/person') //now exporting person in personRoutes
 // const menuItem = require('./models/menuItem') //now exporting menuItem in menuItemRoutes
 
-app.get('/', logReq, function(req, res) {
+app.get('/', function(req, res) {
     res.send("Hello World")
 })
+
+// to implement logReq to all endpoints
+app.use(logReq)
 
 // app.get('/idli', function(req, res) {
 //     // res.send("Hello World - Your IDLI is made")
