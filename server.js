@@ -21,7 +21,7 @@ app.get('/', function(req, res) {
 })
 
 // to implement logReq to all endpoints
-app.use(logReq)
+// app.use(logReq)
 
 // app.get('/idli', function(req, res) {
 //     // res.send("Hello World - Your IDLI is made")
@@ -158,8 +158,8 @@ const personRoutes = require('./routes/personRoutes')
 const menuItemRoutes = require('./routes/menuItemRoutes')
 
 // use the routers
-app.use('/person', personRoutes)
-app.use('/menuItem', menuItemRoutes)
+app.use('/person', logReq, personRoutes)
+app.use('/menuItem', logReq, menuItemRoutes)
 
 
 app.listen(PORT, () => console.log("Listening on port no 3000"))
