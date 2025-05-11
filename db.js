@@ -5,8 +5,8 @@ require('dotenv').config()
 
 // define mongodb url
 // const mongoURL = ''; // local url
-// const mongoURL = process.env.MONGODB_URL_LOCAL; // online url -> connect to online cluster
-const mongoURL = process.env.MONGODB_URL; // online url -> connect to online cluster
+const mongoURL = process.env.MONGODB_URL_LOCAL; // online url -> connect to online cluster
+// const mongoURL = process.env.MONGODB_URL; // online url -> connect to online cluster
 
 // setup mongodb connection
 // useNewUrlParser, useUnifiedTopology - mandatory config options

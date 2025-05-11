@@ -5,12 +5,18 @@ require('dotenv').config()
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json()) // req.body
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
+
+// Middleware function
+const logReq = (req, res, next) => {
+    console.log(`[${new Date().toLocaleString()}] Request made to : ${req.originalUrl}`)// 11/5/2025, 7:56:08 pm Request made to : /
+    next() // move on to next phase
+}
 
 // const person = require('./models/person') //now exporting person in personRoutes
 // const menuItem = require('./models/menuItem') //now exporting menuItem in menuItemRoutes
 
-app.get('/', function(req, res) {
+app.get('/', logReq, function(req, res) {
     res.send("Hello World")
 })
 
