@@ -12,7 +12,12 @@ passport.use(new localStrategy(// verification function
             if(!user)
                 // done -> (error, user, info)
                 return done(null, false, {message: 'Incorrect username'})
-            const isPasswordMatch = user.password === PASSWORD ? true : false;
+
+            // const isPasswordMatch = user.password === PASSWORD ? true : false;
+            const isPasswordMatch = await user.comparePassword(PASSWORD)
+
+            // create comparePassword in personSchema
+
             if(isPasswordMatch) {
                 return done(null, user)
             }else {

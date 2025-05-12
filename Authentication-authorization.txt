@@ -59,3 +59,47 @@ Bcrypt: ... diagram ...
 Now we have to update our person model to store hashed passwords. Modify the registration logic to hash the password before saving it to the database.
 Because the end user did not know about hashing, we have to internally maintain it. Like we are saving the hashed password before saving it into the database.
 We are using a Mongoose middleware hook to perform and action before saving a document to the database. Specifically its using the ## pre ## middleware to execute function before the ## save ## operation in database.
+
+... code ...
+The ## pre('save', ...) ## middleware is triggered before the ## save ## operation on the mongoose model instance.
+Inside the middleware function, it checks if the password field has been modified (or if its a new document). If not, it skips the hashing process.
+If the password has been modified, it generates a new salt using ## bcrypt.genSalt ## and then hashes the password using ## bcrypt.hash ##
+The original plain text password in the ## person ## document is then replaced with the hashed password.
+The ## next() ## function is called to proceed with the same operation
+
+The line const salt = await brypt.genSalt(10) is responsible for generating a salt, which is a random string of characters used as an additional input to the password hashing function.
+Salting is a crucial step in password hashing to prevent attackers from using precomputed tables (rainbow tables) to quickly look up the hash value of a password
+brcypt.genSalt(rounds): This function generates a salt using the specified number of "rounds". The "Rounds" parameter indicates the complexity of the hashing algorithm. The higher the number of rounds, the more the secure the salt, but it also increases the computational cost.
+
+if(!person.isModified('password')) return next()
+
+This line is a conditional check that prevents unncessary rehashing of the password when the document is being saved.
+
+person.isModified('password') : This method is provided by Mongoose and returns true if the specified field ('password' in this case) has been modified. It returns false if the field has not been modified. 
+return next() : If the password field has not been modified, the function immediately returns, skipping the rest of the middleware, this is because there is no need to rehash the password if it has not changed.
+
+------------ How bcrypt works ------------
+When you use bcrypt to hash a password, the library internally stores the salt as part of the resulting hashed password. This means that you don't need to separately store the salt in your database; it is included in the hashed password itself.
+Here's a simplified explanation of how it works:
+1. Hashing a password: 
+When you hash a password using bcrypt.hash, the library generates a random salt, hashes the password along with the salt, and produces a hashed password that incorporates both the salt and the hashed value.
+
+const salt = await bcrypt.genSalt(10)
+const hashPassword = await bcrypt.hash('userpassword', salt)
+
+The ##hashedPassword## now contains both the ###hashed password and the salt###
+
+------------ Modify Auth Code ------------
+We also have to modify the password-matching logic in the passport auth file
+Lets create a comparePassword named function which compares or check the passowrd.
+... code ...
+
+------------ Compare function ------------
+We also have to write the compare function
+... code ...
+
+When you later want to verify a user's entered password during login, you use bcrypt.compare. This function internally extracts the salt from the stored hashed password and uses it to hash the entered password for comparison.
+
+const isMatch = await brcypt.compare('enteredPassword', storedHashedPassword)
+
+The compare function automatically extracts the salt from storedHashedPassword and uses it to hash the entered password, it then compares the resulting hash with the stored hash. If they match, it indicates that the entered password is correct.
