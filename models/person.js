@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const brcypt = require('bcrypt')
 
 // define person schema
 const personSchema = new mongoose.Schema({
@@ -39,6 +40,8 @@ const personSchema = new mongoose.Schema({
         required: true
     },
 })
+
+
 
 // define perosn model
 const person = mongoose.model('person', personSchema)

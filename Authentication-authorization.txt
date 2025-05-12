@@ -46,3 +46,16 @@ In code {session: false}, but localStrategy is made to implement along with sess
 so in Postman:-
 under Authorization => even after entering correct username and passowrd, there is Bad Request
 under Params => after entering correct username and passowrd, authentication gets successfully completed and url becomes -> localhost:3000/?username=jay123&password=iamjay123
+
+------------ Store Plain Password ------------
+Storing plain passwords is not a secure practice. To enhance security, it's highly recommended to hash and salt passwords before storing them.
+... diagram ...
+
+You can use ## bcrypt ## library for password hashing in your Node.js application
+npm install bcrypt --save
+Bcrypt: ... diagram ...
+
+------------ Password hash Salting: ... diagram ...
+Now we have to update our person model to store hashed passwords. Modify the registration logic to hash the password before saving it to the database.
+Because the end user did not know about hashing, we have to internally maintain it. Like we are saving the hashed password before saving it into the database.
+We are using a Mongoose middleware hook to perform and action before saving a document to the database. Specifically its using the ## pre ## middleware to execute function before the ## save ## operation in database.

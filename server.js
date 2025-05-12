@@ -2,9 +2,7 @@ const express = require('express')
 const app = express()
 const db = require('./db')
 require('dotenv').config()
-const passport = require('passport')
-const localStrategy = require('passport-local').Strategy
-const person = require('./models/person')
+const passport = require('./auth')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json()) // req.body
@@ -23,31 +21,11 @@ const logReq = (req, res, next) => {
 // to implement logReq to all endpoints
 app.use(logReq)
 
-passport.use(new localStrategy(// verification function
-    async (USERNAME, PASSWORD, done) => {
-        // authentication logic here
-        try {
-            console.log("Received credentials: ", USERNAME, PASSWORD)
-            const user = await person.findOne({username: USERNAME})
-            if(!user)
-                // done -> (error, user, info)
-                return done(null, false, {message: 'Incorrect username'})
-            const isPasswordMatch = user.password === PASSWORD ? true : false;
-            if(isPasswordMatch) {
-                return done(null, user)
-            }else {
-                return done(null, false, {message: 'Incorrect password'})
-            }
-        }catch(err) {
-            return done(err)
-        }
-    }
-))
-
 app.use(passport.initialize())
 
 const localAuthMiddleware = passport.authenticate('local', {session: false})
-app.get('/', localAuthMiddleware, function(req, res) {
+
+app.get('/', function(req, res) {
     res.send("Hello World")
 })
 
@@ -187,7 +165,7 @@ const personRoutes = require('./routes/personRoutes')
 const menuItemRoutes = require('./routes/menuItemRoutes')
 
 // use the routers
-app.use('/person', personRoutes)
+app.use('/person', localAuthMiddleware, personRoutes)
 app.use('/menuItem', menuItemRoutes)
 
 app.listen(PORT, () => console.log("Listening on port no 3000"))
