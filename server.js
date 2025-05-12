@@ -2,26 +2,54 @@ const express = require('express')
 const app = express()
 const db = require('./db')
 require('dotenv').config()
+const passport = require('passport')
+const localStrategy = require('passport-local').Strategy
+const person = require('./models/person')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json()) // req.body
 const PORT = process.env.PORT || 3000;
 
-// Middleware function
+// Middleware function - Imagine you want to log every request made to your "Node Hotel" application, you can use middleware for this
 const logReq = (req, res, next) => {
     console.log(`[${new Date().toLocaleString()}] Request made to : ${req.originalUrl}`)// 11/5/2025, 7:56:08 pm Request made to : /
     next() // move on to next phase
+    // if you remove next(), logging will take place but it can't go to server and can't further process the response, it gets stuck in middleware
 }
 
 // const person = require('./models/person') //now exporting person in personRoutes
 // const menuItem = require('./models/menuItem') //now exporting menuItem in menuItemRoutes
 
-app.get('/', function(req, res) {
+// to implement logReq to all endpoints
+app.use(logReq)
+
+passport.use(new localStrategy(// verification function
+    async (USERNAME, PASSWORD, done) => {
+        // authentication logic here
+        try {
+            console.log("Received credentials: ", USERNAME, PASSWORD)
+            const user = await person.findOne({username: USERNAME})
+            if(!user)
+                // done -> (error, user, info)
+                return done(null, false, {message: 'Incorrect username'})
+            const isPasswordMatch = user.password === PASSWORD ? true : false;
+            if(isPasswordMatch) {
+                return done(null, user)
+            }else {
+                return done(null, false, {message: 'Incorrect password'})
+            }
+        }catch(err) {
+            return done(err)
+        }
+    }
+))
+
+app.use(passport.initialize())
+
+app.get('/', passport.authenticate('local', {session: false}), function(req, res) {
     res.send("Hello World")
 })
 
-// to implement logReq to all endpoints
-// app.use(logReq)
 
 // app.get('/idli', function(req, res) {
 //     // res.send("Hello World - Your IDLI is made")
@@ -158,8 +186,7 @@ const personRoutes = require('./routes/personRoutes')
 const menuItemRoutes = require('./routes/menuItemRoutes')
 
 // use the routers
-app.use('/person', logReq, personRoutes)
-app.use('/menuItem', logReq, menuItemRoutes)
-
+app.use('/person', personRoutes)
+app.use('/menuItem', menuItemRoutes)
 
 app.listen(PORT, () => console.log("Listening on port no 3000"))

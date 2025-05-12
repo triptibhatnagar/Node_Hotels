@@ -1,0 +1,48 @@
+------------After notes (Remaining portion) :-------------
+It's important to note that while authentication and authorization are often discussed as distinct steps, they work together as essential components of a security strategy to control access to resources and protect against unauthorized actions.
+Now we will implement authentication as a middleware function so that routes will be authenticated before reaching out to server.
+Implementing authentication as a middleware function is a common and effective approach.
+
+------------Passport.js------------
+Passport.Js is a popular authentication middleware for node js. Authentication is the process of verifying the identity of a user, typically through a username and password, before granting access to certain resources or features on a website or application.
+Think of passport.js as a helpful tool that makes it easier for developers to handle user authentication in their node.js applications. It simplifies the process of authenticating users by providing a set of pre-built strategies for different authentication methods such as username and password, social media logins like Facebook or Google and more.
+Here's a breakdown of some key concepts in passport.js :-
+1. Middleware: In the context of web development, middleware is software that sits between the application and the server. Passport.js acts as a middleware intercepting requests and adding authentication-related functionality to them.
+2. Strategy: passport.Js uses the concept of strategies for handling different authentication methods. A strategy is a way of authenticating users. Passport.js comes with various built-in strategies and you can also create custom strategies to specific authentication providers.
+3. Serialize and deserialize: passport.js provides methods for serializing and deserializing userdata. Serialization is the process of converting user data into a format that can be stored usually as a unique identifier. Deserialisation is the reverse process of converting that unique identifier back into user data.These processes are essential for managing user sessions.
+
+-------------> Install passport ------------
+To use passport.JS in a Node.js application, you need to install the passport package along with the authentication strategies you intend to use. Here, we are using local strategies authentication (username and password).
+You would typically install passport-local
+npm install passport passport-local
+Once you have installed these packages you can set up and configure passport properties in your application.
+// ... code ...
+
+-------------> Passport local strategy ------------
+The passport local strategy is a part of the passport.JS authentication middleware for node.js. It's specifically designed for handling username and password-based authentication.
+The passport local strategy, by default, extract the username and password from the request body. It is a common practice for username and password-based authentication systems to send the credentials as part of the request body, especially in login forms.
+
+-------------> Add username and password ------------
+Now we have to add username and password in the person schema.
+// ... code added ...
+but previous records of person don't have username and password, so they will not be able to login
+new people can login
+
+-------------> Configure the Local Strategy ------------
+Define and configure the local strategy using passport-local.
+You need to provide a verification function that checks the provided username and password
+// ... code ...
+In the local strategy's verification function, you typically query your database to find the user with the provided username. You then compare the provided password with the stored password.
+In the context of LocalStrategy, passport.Js expects the verification function to have the following signature:
+function(username, password, done)
+The done callback should always be the last parameter, and it's essential to maintain this order for passport.js to work correctly, if you change the order of parameters, you risk breaking the expected behaviour of Passport.js
+
+In the context of Passport.js, done is a callback function that is provided by Passport to signal the completion of an authentication attempt. It is used to indicate whether the authentication was successful, and if so, to provide information about the authenticated user.
+The done function taks 3 parameters: done(error, user, info)
+If the authentication is successful, you call done(null, user) where user is an object representing the authenticated user.
+If the authentication fails, you call done(null, false, {message: 'some message'}). The second parameter (false) indicates that authentication 
+// ... code ...
+In code {session: false}, but localStrategy is made to implement along with session
+so in Postman:-
+under Authorization => even after entering correct username and passowrd, there is Bad Request
+under Params => after entering correct username and passowrd, authentication gets successfully completed and url becomes -> localhost:3000/?username=jay123&password=iamjay123
